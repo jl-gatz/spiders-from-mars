@@ -1,6 +1,9 @@
 from fastapi import APIRouter
 
 from process_miner.core.crawler.crawler import crawl_site
+from process_miner.core.crawler.crawler_lista_servicos import (
+    crawl_lista_servicos,
+)
 from process_miner.models.routers.crawler_models import (
     CrawlRequest,
     CrawlResponse,
@@ -27,3 +30,8 @@ def crawl(payload: CrawlRequest):
     ]
 
     return CrawlResponse(pages=pages)
+
+
+@router.get('/lista-servicos/')
+def crawl_lista_servicos_endpoint(start_url: str):
+    return crawl_lista_servicos(start_url)

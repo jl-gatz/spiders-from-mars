@@ -1,47 +1,64 @@
 from unittest.mock import patch
 
 from process_miner.core.crawler.crawler import crawl_site
+from process_miner.models.core.core_models import CrawlResult
 
 
-def test_crawl_site():
-    # Mock fetch_html to return sample HTML
-    html1 = """
+def test_crawl_site_single_page():
+    html = """
     <html>
-    <head><title>Page 1</title></head>
+    <head><title>Test Title</title></head>
     <body>
-        <h1>Heading 1</h1>
-        <p>Text 1</p>
-        <a href="https://example.com/page2">Link</a>
+    <h1>Heading 1</h1>
+    <p>This is some text.</p>
     </body>
     </html>
     """
-    html2 = """
-    <html>
-    <head><title>Page 2</title></head>
-    <body>
-        <h2>Heading 2</h2>
-        <p>Text 2</p>
-    </body>
-    </html>
-    """
+    with patch(
+        'process_miner.core.crawler.crawler.fetch_html', return_value=html
+    ):
+        result = crawl_site('https://example.com')
+        assert isinstance(result, CrawlResult)
+        assert result.start_url == 'https://example.com'
+        assert len(result.pages) == 1
+        page = result.pages[0]
+        assert page.url == 'https://example.com'
+        assert page.title == 'Test Title'
+        assert page.headings == ['Heading 1']
+        assert 'This is some text' in page.text
+        assert page.links == []
 
+
+def test_crawl_site_with_links():
     def mock_fetch(url):
         if url == 'https://example.com':
-            return html1
-        elif url == 'https://example.com/page2':
-            return html2
+            return """
+            <html><head><title>Home</title></head><body><a href="/page1">
+            Page 1</a></body></html>
+            """
+        elif url == 'https://example.com/page1':
+            return """
+            <html><head><title>Page 1</title></head><body>
+            <h2>Sub Heading</h2></body></html>
+            """
         else:
-            raise Exception('Unexpected URL')
+            raise ValueError('Unexpected URL')
 
     with patch(
         'process_miner.core.crawler.crawler.fetch_html', side_effect=mock_fetch
     ):
         result = crawl_site('https://example.com', max_pages=2)
-        assert result.start_url == 'https://example.com'
         assert len(result.pages) == 2  # noqa: PLR2004
-        assert result.pages[0].url == 'https://example.com'
-        assert result.pages[0].title == 'Page 1'
-        assert 'Heading 1' in result.pages[0].headings
-        assert 'Text 1' in result.pages[0].text
-        assert result.pages[1].url == 'https://example.com/page2'
-        assert result.pages[1].title == 'Page 2'
+        urls = [p.url for p in result.pages]
+        assert 'https://example.com' in urls
+        assert 'https://example.com/page1' in urls
+
+
+def test_crawl_site_fetch_error():
+    with patch(
+        'process_miner.core.crawler.crawler.fetch_html',
+        side_effect=Exception('Fetch error'),
+    ):
+        result = crawl_site('https://example.com')
+        assert len(result.pages) == 0
+        assert result.start_url == 'https://example.com'
