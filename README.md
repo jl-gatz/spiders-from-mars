@@ -22,7 +22,6 @@ project_root/
 │   ├── core/              # Configurações globais
 │   ├── routers/           # Rotas da API (crawler, healthcheck, etc.)
 │   ├── services/          # Lógica de scraping e processamento
-│   ├── schemas/           # Modelos Pydantic
 │   └── utils/             # Funções auxiliares
 │
 ├── tests/                 # Testes automatizados
@@ -85,12 +84,6 @@ poetry config virtualenvs.in-project true
 
 ```bash
 poetry install
-```
-
-4. Configure as variáveis de ambiente:
-
-```bash
-cp .env.example .env
 ```
 
 ---
@@ -194,3 +187,4 @@ Este projeto tem finalidade educacional e experimental.
 Este projeto foi estruturado para crescer sem tropeçar nos próprios fios. Começa simples, mas já fala a língua de sistemas maiores.
 
 Se o scraper é a aranha, o FastAPI é a teia. 🕸️
+
