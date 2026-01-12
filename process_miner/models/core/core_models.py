@@ -14,3 +14,9 @@ class Page(BaseModel):
 class CrawlResult(BaseModel):
     start_url: HttpUrl
     pages: List[Page]
+
+
+class Process(BaseModel):
+    name: str
+    actors: List[str]
+    steps: List[str]

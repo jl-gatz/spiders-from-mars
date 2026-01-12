@@ -1,15 +1,15 @@
-from process_miner.core.model import Process
+from process_miner.models.core.core_models import Process
 
 
 def extract_process(url: str) -> Process:
     # stub do MVP
     return Process(
-        name="Acesso remoto via VPN",
-        actors=["Usuário", "Equipe de TI"],
+        name='Acesso remoto via VPN',
+        actors=['Usuário', 'Equipe de TI'],
         steps=[
-            "Solicitar acesso",
-            "Validar vínculo",
-            "Criar credenciais",
-            "Usuário acessa VPN"
-        ]
+            'Solicitar acesso',
+            'Validar vínculo',
+            'Criar credenciais',
+            'Usuário acessa VPN',
+        ],
     )
