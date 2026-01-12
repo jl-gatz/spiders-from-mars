@@ -29,7 +29,11 @@ def crawl_site(start_url: str, max_pages: int = 20) -> CrawlResult:
         title, headings, text = parse_html(html)
 
         page = Page(
-            url=url, title=title, text=text, headings=headings, links=[]
+            url=url,
+            title=title,
+            text=text,
+            headings=headings,
+            links=[],  # type: ignore
         )
         pages.append(page)
 

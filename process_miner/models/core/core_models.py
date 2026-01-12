@@ -1,10 +1,14 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import AfterValidator, BaseModel
+from pydantic_string_url import HttpUrl
+from typing_extensions import Annotated
+
+HttpURLString = Annotated[HttpUrl, AfterValidator(str)]
 
 
 class Page(BaseModel):
-    url: HttpUrl
+    url: HttpURLString
     title: Optional[str]
     text: str
     headings: List[str] = []
@@ -12,7 +16,7 @@ class Page(BaseModel):
 
 
 class CrawlResult(BaseModel):
-    start_url: HttpUrl
+    start_url: HttpURLString
     pages: List[Page]
 
 
